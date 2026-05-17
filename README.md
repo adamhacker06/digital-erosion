@@ -1,77 +1,124 @@
 # Digital Erosion
 
-A browser-based interactive piece that ties your calendar’s busyness and a physical potentiometer to a visual pulse—chaos and calm driven by your day and your hand.
+_By Adam Hacker_
 
-## Showcase & Description
+> Choas based on your own schedule! Then dimmed by your own twist. :)
 
-### Prelude
+---
 
-Digital Erosion reflects how schedule density and small physical adjustments shape our sense of control. The sketch reads how many hours are marked busy today on your Google Calendar and combines that with a potentiometer on an Arduino. The result is a live visual pulse: more busy hours push the piece toward chaos, while turning the knob lets you search for a fleeting “calm” state—a sweet spot that slowly drifts so the search never quite ends.
+## Showcase / Description of Finished Piece
 
-### Concept
+"Digital Erosion" is an interactve art piece that combines both software and hardware into a single visual pulse. The "density" of your day (as determined by Google Calendar) and the turn of a knob control the chaos. The piece is meant to represent the delicate balance between what we control (the twist of the knob) and how much life controls us (the density of the calendar).
 
-- **Calendar as input**: The piece fetches today’s busy hours from your primary Google Calendar. More blocked time increases a baseline level of visual chaos.
-- **Potentiometer as control**: An Arduino sends a potentiometer value (0–1023) over Web Serial. The knob does not simply map to “calm at one end”; instead there is a hidden **sweet spot** that changes each time you load the sketch.
-- **Finding calm**: You turn the knob to find the calm zone. When you hold it there long enough, the sweet spot slowly drifts, so you have to keep adjusting—a meditative, never-stable balance.
-- **Visual pulse**: A central form responds to both calendar load and knob position: chaos when the day is busy or the knob is far from the sweet spot, and a calmer state when you find (and briefly hold) the calm zone.
+The artwork reads how many hours are marked busy om today's Google Calendar and then treats that as a baseline level of chaos. A busy day means that the artwork can never settle fully. On top of that, a potentiometer is wired through an Arduino and can act as a control level. But the knob alone is not enough. There's actually a hidden **sweet spot** that is randomized every time the sketch loads.
 
-### Running the piece
+Once you twist the knob to the sweet spot, the artwalk "calms down". But even as it's calming, the sweet spots adjusts, forcing the user to constantly find balance in the chaos.
 
-**Prerequisites**
+**Key features:**
 
-- **Python 3** (or any static HTTP server) for serving the project locally.
-- **Google Calendar API** credentials in `art.js` when using live calendar data:
-  - Replace `GCAL_API_KEY` and `GCAL_CLIENT_ID` with your values from [Google Cloud Console](https://console.cloud.google.com/).
-  - Enable the **Google Calendar API** for your project.
-  - Add your local origin (e.g. `http://localhost:8000`) to the OAuth client’s **Authorized JavaScript origins**.
-- **Chrome** is recommended (Web Serial support).
+- Calendar-driven chaos. It pulls today's busy hours from Google Calendar and sets it as a baseline level of visual turbulence the knob cannot fully escape
+- A hidden potentiometer "sweet spot" that is randomized each run, so the calm position must be searched for rather than memorized
+- Drifting calm — holding the knob in the sweet spot makes it slowly run away, keeping the search alive
+- A p5.js pulse built from a noisy heartbeat ring and erratic spikes that intensify with chaos, shifting from teal-to-red turbulence to a warm yellow when calm
+- A physical potentiometer read by an Arduino and streamed over Web Serial at 115200 baud
+- Responsive full-window canvas that re-lays-out on any screen size
 
-**Steps**
-
-1. Open a terminal and go to the project folder:
-
-   ```bash
-   cd "/Users/adamhacker/Documents/DESINV 23/digital-erosion"
-   ```
-
-2. Start a local HTTP server (e.g. Python):
-
-   ```bash
-   python3 -m http.server 8000
-   ```
-
-   The project is served at `http://localhost:8000`.
-
-3. In Chrome, open `http://localhost:8000`.
-
-4. **Connect the Arduino**: Click **“Click me to connect to your Arduino!”** and choose your board’s serial port when prompted.
-
-5. **Sign in to Google** (if using live calendar): When the sign-in popup appears, sign in with the account whose calendar should drive the visual. The sketch then uses today’s busy hours to drive the pulse.
-
-To run without credentials, set `USE_FAKE_CALENDAR_DATA = true` in `art.js` and adjust `FAKE_BUSY_HOURS` to simulate a busier or calmer day.
-
-### Controls / interaction
-
-- **Potentiometer**: Turn the knob to search for the calm sweet spot. Holding it there causes the sweet spot to drift so you must keep adjusting.
-- **Button**: “Click me to connect to your Arduino!” opens the Web Serial port picker to connect the Arduino once per session.
-
-There is no other UI; the only inputs are the knob and the calendar data.
-
-### Technical notes
-
-- **Stack**: p5.js in the browser, [Makeability Lab Serial library](https://github.com/makeabilitylab/p5js) for Web Serial, Google Calendar API (optional).
-- **Arduino**: Sends the potentiometer value over serial at 115200 baud. Use the `serial_input` sketch in `serial_input/serial_input.ino` for the expected behavior.
-- **Calendar**: With `USE_FAKE_CALENDAR_DATA = false`, the page uses the Google API client to list today’s events and sums busy time; that value is normalized and combined with the normalized pot value to drive the chaos/calm model.
-- **Sweet spot**: Each run picks a random `calmPotCenter` (0–1). The sketch measures how close the normalized pot value is to that center and applies a falloff (e.g. `pow(1.0 - normalizedDistance, 1.4)`). After a short hold in the calm zone, `calmPotCenter` drifts so the viewer must keep searching.
+---
 
 ## Process
 
-### Setup and dependencies
+### Ideation / Design Process
 
-- **Arduino**: Flash `serial_input/serial_input.ino` so the board reads the potentiometer and streams the value over serial.
-- **Credentials**: For live calendar, create OAuth credentials in Google Cloud Console, enable the Calendar API, and set authorized JavaScript origins to your local URL (e.g. `http://localhost:8000`). Put the API key and client ID into `art.js` as described in *Running the piece*.
-- **Fake data**: With `USE_FAKE_CALENDAR_DATA = true`, no Google sign-in or credentials are required; the sketch uses `FAKE_BUSY_HOURS` for the calendar input.
+Since the topic of this project was "Sense of Self", to start I looked inwards, trying to find what best represented me. At first, I thought about my favorite hobbies. But during this reflection, I somewhat sadly realized that most of my time is not _actually_ spent doing these tasks. So, could they really represent "me"? I quickly opened my phone to go to my calendar, to see where all my times goes.
 
-## Conclusion & Reflection
+In that moment, I realized that my online calendar itself is a representation of me. It's a reflection of how I choose to spend my time, filled with both strict academic commitments and fun social outings.
 
-Digital Erosion ties two inputs—schedule density and a single physical control—into one continuous feedback loop. The drifting sweet spot makes “calm” something you chase rather than lock in, reflecting how both busy days and attention constantly shift.
+Moving forward, I knew that my project wanting to poke fun at this fun aspect of my life. I wanted to have my project based in the density of my calendar, and to showcase the little control we sometimes have over our lives.
+
+### Prototyping / Building Process
+
+The project is a small, self-contained web piece built with **p5.js** for rendering and the browser's **Web Serial API** (via the makeabilitylab `serial.js` helper) for talking to the hardware. The physical side is an **Arduino** with a single potentiometer on analog pin **A0**.
+
+The visual is driven by a single `chaos` value between 0 and 1, assembled each frame from two sources:
+
+- **The calendar** sets a floor. Today's busy hours are normalized against a configurable `maxBusyHours` to produce a `busyIntensity`. A fraction of that becomes `baseChaosFromBusy` — a minimum amount of turbulence that exists no matter where the knob sits.
+- **The potentiometer** modulates the rest. The raw 0–1023 reading is normalized to 0–1, and its distance from the hidden `calmPotCenter` is measured. That distance is run through an eased falloff (`pow(1.0 - normalizedDistance, 1.4)`) to produce a `calmFactor`, which scales how much of the remaining "extra" chaos is suppressed.
+
+On every run, `calmPotCenter` is set to a random value between 0.1 and 0.9. When the knob stays inside the calm zone for roughly 1.5 seconds (90 frames), `calmPotCenter` begins to drift — always away from the current knob position — so the viewer has to keep hunting for it. Step out of the zone and the hold timer resets.
+
+That `chaos` value then drives nearly everything on screen: the heartbeat frequency and amplitude, the wobble of a Perlin-noise outer ring, the number and length of erratic spikes, and the stroke color. Near the sweet spot the piece deliberately overrides the palette to a warm, unmistakable yellow so the calm state reads clearly.
+
+On the hardware side, the Arduino sketch is intentionally tiny: it reads `A0`, and only prints the value over serial when it changes, with a short `delay(15)` to keep the stream manageable. The p5 sketch parses each incoming line as an integer and stores it as the current pot value.
+
+The piece also supports a **fake-data mode**. With `USE_FAKE_CALENDAR_DATA = true`, the sketch skips Google entirely and uses a `FAKE_BUSY_HOURS` constant, which makes it easy to develop, demo, or simulate a busier or calmer day without credentials.
+
+![Wiring 1](images/wiring1.png)
+![Wiring 2](images/wiring2.png)
+
+The above two screenshots showcase the wiring required for the project.
+
+<p align="center" width="100%">
+<video src="https://github.com/user-attachments/assets/a526d16d-bae0-41e5-be65-025da7bdb4ec" width="80%" controls></video>
+</p>
+
+The above video showcases a live demo of the project. It is shown that the potentiometer can "calm" the choas of the visual piece.
+
+<p align="center" width="100%">
+<video src="https://github.com/user-attachments/assets/53193d49-8593-4e1a-abd0-f1b93f8d37ea" width="80%" controls></video>
+</p>
+
+The above video shows a video taken straight from the device, showcasing the calm / restful state of the artwork.
+
+---
+
+## Conclusion / Reflection
+
+This project was a lot of fun. It was really nice connecting my artwork with an API, especially since that type of technology opens up so much possibility for future artwork.
+
+It was definitely a bit challenging getting the API to work, and I'm not sure if it would be the easiest thing to recreate in the future. However, it was a good practice regardless.
+
+I would want to improve this project in the future by showing a greater visual connection to the Google Calendar. Right now, the "busy hours" from the calendar are used as a baseline for the chaos, but it might be nice to show the actual events themselves. I'm not sure how this would work, but I think the piece could benefit from this stronger connection.
+---
+
+## Hardware Setup
+
+You'll need:
+
+- An Arduino (Uno or similar)
+- One potentiometer (a 10kΩ linear pot works well)
+- Jumper wires (and a breadboard, optionally)
+
+Wiring:
+
+- One outer pin of the potentiometer → **5V**
+- The other outer pin → **GND**
+- The middle pin (wiper) → analog pin **A0**
+
+Upload [`serial_input/serial_input.ino`](serial_input/serial_input.ino) to the board before connecting. The sketch reads `A0` and streams the value over serial at **115200 baud**.
+
+---
+
+## Running the Project
+
+The Web Serial API requires the page to be served over `http://localhost` (or HTTPS) — opening the HTML file directly will not work.
+
+1. From the project folder, start a local server, e.g. `python3 -m http.server 8000`
+2. Open **http://localhost:8000** in **Chrome or Edge** (Web Serial is not supported in Firefox or Safari).
+3. Click **"Click me to connect to your Arduino!"** and select your board's serial port.
+4. Turn the knob to hunt for the calm sweet spot — watch the pulse.
+
+**Calendar data (optional).** By default the sketch runs in fake-data mode (`USE_FAKE_CALENDAR_DATA = true` in `art.js`), using `FAKE_BUSY_HOURS` so no Google account is needed. To drive the piece with your real calendar instead:
+
+- In [Google Cloud Console](https://console.cloud.google.com/), create OAuth credentials and an API key, and enable the **Google Calendar API**.
+- Add your local origin (e.g. `http://localhost:8000`) to the OAuth client's **Authorized JavaScript origins**.
+- In `art.js`, set `USE_FAKE_CALENDAR_DATA = false` and replace `GCAL_API_KEY` and `GCAL_CLIENT_ID` with your own values.
+- When you load the page, a Google sign-in popup will appear; sign in with the account whose calendar should drive the visual.
+
+---
+
+## Controls
+
+- **Turn the potentiometer** — search for the hidden calm sweet spot; the pulse softens to a warm yellow as you near it, and the sweet spot drifts once you hold it
+- **"Click me to connect to your Arduino!"** button — open the Web Serial connection to the board (once per session)
+
+There is no other UI — the only inputs are the knob and your calendar.
