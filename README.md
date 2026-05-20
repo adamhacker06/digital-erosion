@@ -57,9 +57,7 @@ The piece also supports a **fake-data mode**. With `USE_FAKE_CALENDAR_DATA = tru
 
 The above two screenshots showcase the wiring required for the project.
 
-<p align="center" width="100%">
-<video src="https://github.com/user-attachments/assets/a526d16d-bae0-41e5-be65-025da7bdb4ec" width="80%" controls></video>
-</p>
+https://github.com/user-attachments/assets/34f0cb41-e2ec-44ca-9adc-87c418bc4f2f
 
 The above video showcases a live demo of the project. It is shown that the potentiometer can "calm" the choas of the visual piece.
 
